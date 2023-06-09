@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head.ejs', { title }) %>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <div class="d-flex">
+            <%- include('./partials/sidebar.ejs') %>
+            <main class="d-flex bg-dark flex-column align-items-center" style="width: 100%">
+                <h2 class="fw-bold my-3 text-white">Data Users</h2>
+                <div class="table-container" style="width: 90%">
+                    <!-- Alert -->
+                    <div class="col-auto col-lg-12 mt-2">
+                        <% if(alert.message != "") { %>
+                        <div class="alert alert-<%= alert.status %>" role="alert">
+                            <%= alert.message %>
+                        </div>
+                        <% } %>
+                    </div>
+                    <!-- Button trigger modal -->
+                    <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#add-modal"
+                    >Tambah
+                    </button>
+                    <!-- Table of data -->
+                    <table class="table table-dark table-striped" style="vertical-align: middle" id="dataTable">
+                        <thead>
+                            <tr class="text-center">
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>No Telpon</th>
+                                <th>Umur</th>
+                                <th>Alamat</th>
+                                <th>Status Aktif</th>
+                                <th>Jenis User</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i = 0; i < users.length; i++){ %>
+                            <tr>
+                                <td class="text-center"><%= i+1 %></td>
+                                <td><%= users[i].nama %></td>
+                                <td><%= users[i].telp %></td>
+                                <td class="text-center"><%= users[i].umur %> Tahun</td>
+                                <td><%= users[i].alamat %></td>
+                                <td class="text-center"><%= users[i].isAktif %></td>
+                                <td class="text-center"><%= users[i].jenisUser %></td>
+                                <td class="text-center">
+                                    <form 
+                                    action="/users/<%= users[i].id %>?_method=DELETE"
+                                    method="POST"
+                                    >
+                                        <a 
+                                        href="javascript:void()"
+                                        class="btn btn-warning btn-sm button-update"
+                                        data-id="<%= users[i].id %>"
+                                        data-nama="<%= users[i].nama %>"
+                                        data-telp="<%= users[i].telp %>"
+                                        data-umur="<%= users[i].umur %>"
+                                        data-alamat="<%= users[i].alamat %>"
+                                        data-isAktif="<%= users[i].isAktif %>"
+                                        data-jenisUser="<%= users[i].jenisUser %>"
+                                        data-username="<%= users[i].username %>"
+                                        data-password="<%= users[i].password %>"
+                                        >Edit</a>
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Apa kamu yakin ingin menghapus data users ini?');"
+                                        >
+                                        Hapus
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <!-- Add Modal -->
+        <div
+            class="modal fade"
+            id="add-modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Tambah User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form action="/users" method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="name">Nama</label>
+                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan nama member" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">No Telpon</label>
+                                <input type="text" class="form-control" id="telp" name="telp" placeholder="Masukkan no telpon" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Umur (Tahun)</label>
+                                <input type="number" class="form-control" id="umur" name="umur" placeholder="Masukkan umur" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Alamat</label>
+                                <textarea type="text" class="form-control" id="alamat" placeholder="Masukkan alamat" name="alamat" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Status Aktif</label>
+                                <select class="form-control" id="isAktif" name="isAktif" required onclick="removeDefaultOption('isAktif')">
+                                    <option value="">Pilih Status Aktif</option>
+                                    <option value="Aktif">Aktif</option>
+                                    <option value="Non Aktif">Non Aktif</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Jenis User</label>
+                                <select class="form-control" id="jenisUser" name="jenisUser" required onclick="removeDefaultOption('jenisUser')">
+                                    <option value="">Pilih Jenis User</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Member">Member</option>
+                                    <option value="Pegawai">Pegawai</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan username" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password" required/>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility()"><i class="bi bi-eye"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Tutup
+                            </button>
+                            <button type="submit" class="btn btn-primary">Tambah</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div
+            class="modal fade"
+            id="edit-modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form action="/users?_method=PUT" method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="name">Nama</label>
+                                <input type="text" class="form-control nama" name="nama" placeholder="Masukkan nama" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">No Telpon</label>
+                                <input type="text" class="form-control telp" name="telp" placeholder="Masukkan telp" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Umur (Tahun)</label>
+                                <input type="number" class="form-control umur" name="umur" placeholder="Masukkan umur" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Alamat</label>
+                                <textarea type="text" class="form-control alamat" name="alamat" placeholder="Masukkan alamat" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Status Aktif</label>
+                                <select class="form-control isAktif" name="isAktif" required>
+                                    <option value="">Pilih Status Aktif</option>
+                                    <option value="Aktif">Aktif</option>
+                                    <option value="Non Aktif">Non Aktif</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Jenis User</label>
+                                <select class="form-control jenisUser" name="jenisUser" required>
+                                    <option value="">Pilih Jenis User</option> 
+                                    <option value="Admin">Admin</option>
+                                    <option value="Member">Member</option>
+                                    <option value="Pegawai">Pegawai</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Username</label>
+                                <input type="text" class="form-control username" name="username" placeholder="Masukkan username" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control password" name="password" placeholder="Masukkan password" required/>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility()"><i class="bi bi-eye"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" class="id" name="id" />
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Tutup
+                            </button>
+                            <button type="submit" class="btn btn-primary">Edit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <%- include('./partials/js.ejs') %>
+
+        <script>
+            $("#dataTable").on("click", ".button-update", function (){
+                let id = $(this).data("id");
+                let nama = $(this).data("nama");
+                let telp = $(this).data("telp");
+                let umur = $(this).data("umur");
+                let alamat = $(this).data("alamat");
+                let isAktif = $(this).data("isAktif");
+                let jenisUser = $(this).data("jenisUser");
+                let username= $(this).data("username");
+                let password= $(this).data("password");
+
+                $("#edit-modal").modal("show");
+                
+                $(".id").val(id);
+                $(".nama").val(nama);
+                $(".telp").val(telp);
+                $(".umur").val(umur);
+                $(".alamat").val(alamat);
+                $(".isAktif").val(isAktif);
+                $(".jenisUser").val(jenisUser);
+                $(".username").val(username);
+                $(".password").val(password);
+            });
+
+            function togglePasswordVisibility() {
+                var passwordInput = document.getElementById("password");
+                var eyeButton = document.querySelector(".input-group button");
+    
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    eyeButton.innerHTML = "<i class='bi bi-eye-slash'></i>";
+                } else {
+                    passwordInput.type = "password";
+                    eyeButton.innerHTML = "<i class='bi bi-eye'></i>";
+                }
+            }
+
+            function removeDefaultOption(fieldName) {
+                var defaultOption = document.querySelector('#' + fieldName + ' option[value=""]');
+                defaultOption.remove();
+            }
+        </script>
+    </body>
+</html>

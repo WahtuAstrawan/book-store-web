@@ -1,0 +1,14 @@
+body {
+  background-color:whitesmoke;
+  background-image: url(/assets/background-login.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.btn-btn-primary{
+  padding: .4em 2em;
+}
+
+#login.title>span{
+  font-size: .8em;
+}

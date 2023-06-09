@@ -1,0 +1,65 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 230px; min-height: 100vh; height: 100%">
+    <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <span class="fs-3 fw-bold">Z I L O N G Books Store</span>
+    </a>
+    <hr />
+    <ul class="nav nav-pills flex-column mb-5">
+        <li class="nav-item">
+            <a href="/home" class="nav-link text-white fs-5">
+                <i class="bi bi-house-door-fill pe-2"></i>
+                <p class="d-inline">Home</p>
+            </a>
+        </li>
+        <% if (tipeUser === "Admin") { %>
+            <li class="nav-item">
+                <a href="/books" class="nav-link text-white fs-5">
+                    <i class="bi bi-book-half pe-2"></i>
+                    <p class="d-inline">Books</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/users" class="nav-link text-white fs-5">
+                    <i class="bi bi-person-vcard-fill pe-2"></i>
+                    <p class="d-inline">Users</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/transactions" class="nav-link text-white fs-5">
+                    <i class="bi bi-cash-coin pe-2"></i>
+                    <p class="d-inline">Transactions</p>
+                </a>
+            </li>
+        <% } else if (tipeUser === "Member") { %>
+            <li class="nav-item">
+                <a href="/books" class="nav-link text-white fs-5">
+                    <i class="bi bi-book-half pe-2"></i>
+                    <p class="d-inline">Books</p>
+                </a>
+            </li>
+        <% } else if (tipeUser === "Pegawai") { %>
+            <li class="nav-item">
+                <a href="/books" class="nav-link text-white fs-5">
+                    <i class="bi bi-book-half pe-2"></i>
+                    <p class="d-inline">Books</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/transactions" class="nav-link text-white fs-5">
+                    <i class="bi bi-cash-coin pe-2"></i>
+                    <p class="d-inline">Transactions</p>
+                </a>
+            </li>
+        <% } %>
+        
+    </ul>
+    <hr />
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-toggle="dropdown">
+            <img src="\assets\user.jpg" alt="" width="32" height="32" class="rounded-circle me-2" />
+            <strong><%= userName %></strong>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+            <li><a class="dropdown-item" href="/">Sign out</a></li>
+        </ul>
+    </div>
+</div>
