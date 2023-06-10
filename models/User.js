@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 
-const aktifEnum = ['Aktif','Non Aktif'];
-const userEnum = ['Admin', 'Member', 'Pegawai'];
-
-const usersScheme = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     nama: {
         type: String,
         required: true,
@@ -20,14 +17,14 @@ const usersScheme = new mongoose.Schema({
         type: String,
         required: true,
     },
-    isAktif:{
+    aktifsts:{
         type: String,
-        enum: aktifEnum,
+        enum: ['Aktif','Non Aktif'],
         required: true,
     },
-    jenisUser:{
+    jenisusr:{
         type: String,
-        enum: userEnum,
+        enum: ['Admin', 'Member', 'Pegawai'],
         required: true,
     },
     username:{
@@ -40,4 +37,4 @@ const usersScheme = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("Users", usersScheme);
+module.exports = mongoose.model("User", userSchema);

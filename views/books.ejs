@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head.ejs', { title }) %>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <div class="d-flex">
+            <%- include('./partials/sidebar.ejs') %>
+            <main class="d-flex bg-dark flex-column align-items-center" style="width: 100%">
+                <h2 class="fw-bold my-3 text-white">Data Buku</h2>
+                <div class="table-container" style="width: 90%">
+                    <!-- Alert -->
+                    <div class="col-auto col-lg-12 mt-2">
+                        <% if(alert.message != "") { %>
+                        <div class="alert alert-<%= alert.status %>" role="alert">
+                            <%= alert.message %>
+                        </div>
+                        <% } %>
+                    </div>
+                    <!-- Button trigger modal -->
+                    <% if (tipeUser === "Pegawai") { %>
+                        <button 
+                        type="button" 
+                        class="btn btn-primary" 
+                        data-toggle="modal" 
+                        data-target="#add-modal">
+                            Tambah
+                        </button>
+                    <% } %>                    
+                    <!-- Table of data -->
+                    <table class="table table-dark table-striped" style="vertical-align: middle" id="dataTable">
+                        <thead>
+                            <tr class="text-center">
+                                <th>No</th>
+                                <th>Judul</th>
+                                <th>Penulis</th>
+                                <th>Penerbit</th>
+                                <th>Tahun Terbit</th>
+                                <th>Kategori</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <% if (tipeUser === "Pegawai") { %>
+                                <th>Aksi</th>
+                                <% } %>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i = 0; i < books.length; i++){ %>
+                            <tr>
+                                <td class="text-center"><%= i+1 %></td>
+                                <td ><%= books[i].judul %></td>
+                                <td class="text-center"><%= books[i].penulis %></td>
+                                <td class="text-center"><%= books[i].penerbit %></td>
+                                <td class="text-center"><%= books[i].tahuntbt %></td>
+                                <td class="text-center"><%= books[i].kategori %></td>
+                                <td class="text-center">Rp.<%= books[i].harga %></td>
+                                <td class="text-center"><%= books[i].stok %> Unit</td>
+                                <% if (tipeUser === "Pegawai") { %>
+                                <td class="text-center">
+                                    <form 
+                                    action="/books/<%= books[i].id %>?_method=DELETE"
+                                    method="POST"
+                                    >
+                                        <a 
+                                        href="javascript:void()"
+                                        class="btn btn-warning btn-sm button-update"
+                                        data-id="<%= books[i].id %>"
+                                        data-judul="<%= books[i].judul %>"
+                                        data-penulis="<%= books[i].penulis %>"
+                                        data-penerbit="<%= books[i].penerbit %>"
+                                        data-tahuntbt="<%= books[i].tahuntbt %>"
+                                        data-kategori="<%= books[i].kategori %>"
+                                        data-harga="<%= books[i].harga %>"
+                                        data-stok="<%= books[i].stok %>"
+                                        >Edit</a>
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Apa kamu yakin ingin menghapus data buku ini?');"
+                                        >
+                                        Hapus
+                                        </button>
+                                    </form>
+                                </td>
+                                <% } %>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <!-- Add Modal -->
+        <div
+            class="modal fade"
+            id="add-modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Tambah Buku</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form action="/books" method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="name">Judul</label>
+                                <input type="text" class="form-control" id="judul" name="judul" placeholder="Masukkan judul buku" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Penulis</label>
+                                <input type="text" class="form-control" id="penulis" name="penulis" placeholder="Masukkan nama penulis" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Penerbit</label>
+                                <input type="text" class="form-control" id="penerbit" name="penerbit" placeholder="Masukkan nama penerbit buku" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Tahun Terbit</label>
+                                <input type="number" class="form-control" id="tahuntbt" placeholder="Masukkan tahun terbit buku" name="tahuntbt" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Kategori Buku</label>
+                                <select class="form-control" id="kategori" name="kategori" required onclick="removeDefaultOption('kategori')">
+                                    <option value="">Pilih Kategori Buku</option>
+                                    <option value="Fiksi">Fiksi</option>
+                                    <option value="Nonfiksi">Nonfiksi</option>
+                                    <option value="Pendidikan">Pendidikan</option>
+                                    <option value="Anak-anak">Anak-anak</option>
+                                    <option value="Pengembangan Diri">Pengembangan Diri</option>
+                                    <option value="Seni dan Desain">Seni dan Desain</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Harga</label>
+                                <input type="number" class="form-control" id="harga" placeholder="Masukkan harga buku (Rupiah)" name="harga" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Stok</label>
+                                <input type="number" class="form-control" id="stok" placeholder="Masukkan banyaknya stok buku yang tersedia (Unit)" name="stok" required/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Tutup
+                            </button>
+                            <button type="submit" class="btn btn-primary">Tambah</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div
+            class="modal fade"
+            id="edit-modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Buku</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form action="/books?_method=PUT" method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="name">Judul</label>
+                                <input type="text" class="form-control judul" name="judul" placeholder="Masukkan judul buku" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Penulis</label>
+                                <input type="text" class="form-control penulis" name="penulis" placeholder="Masukkan nama penulis" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Penerbit</label>
+                                <input type="text" class="form-control penerbit" name="penerbit" placeholder="Masukkan nama penerbit buku" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Tahun Terbit</label>
+                                <input type="number" class="form-control tahuntbt" name="tahuntbt" placeholder="Masukkan tahun terbit buku" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Kategori Buku</label>
+                                <select class="form-control kategori" name="kategori" required>
+                                    <option value="Fiksi">Fiksi</option>
+                                    <option value="Nonfiksi">Nonfiksi</option>
+                                    <option value="Pendidikan">Pendidikan</option>
+                                    <option value="Anak-anak">Anak-anak</option>
+                                    <option value="Pengembangan Diri">Pengembangan Diri</option>
+                                    <option value="Seni dan Desain">Seni dan Desain</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Harga</label>
+                                <input type="number" class="form-control harga" name="harga" placeholder="Masukkan harga buku (Rupiah)" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Stok</label>
+                                <input type="number" class="form-control stok" name="stok" placeholder="Masukkan stok buku (Unit)" required/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" class="id" name="id" />
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Tutup
+                            </button>
+                            <button type="submit" class="btn btn-primary">Edit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <%- include('./partials/js.ejs') %>
+
+        <script>
+            $("#dataTable").on("click", ".button-update", function (){
+                let id = $(this).data("id");
+                let judul = $(this).data("judul");
+                let penulis = $(this).data("penulis");
+                let penerbit = $(this).data("penerbit");
+                let tahuntbt = $(this).data("tahuntbt");
+                let kategori = $(this).data("kategori");
+                let harga = $(this).data("harga");
+                let stok = $(this).data("stok");
+
+                $("#edit-modal").modal("show");
+                
+                $(".id").val(id);
+                $(".judul").val(judul);
+                $(".penulis").val(penulis);
+                $(".penerbit").val(penerbit);
+                $(".tahuntbt").val(tahuntbt);
+                $(".kategori").val(kategori);
+                $(".harga").val(harga);
+                $(".stok").val(stok);
+            });
+
+            function removeDefaultOption(fieldName) {
+                var defaultOption = document.querySelector('#' + fieldName + ' option[value=""]');
+                defaultOption.remove();
+            }
+        </script>
+    </body>
+</html>

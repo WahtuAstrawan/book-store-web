@@ -13,7 +13,7 @@
         <div class="d-flex">
             <%- include('./partials/sidebar.ejs') %>
             <main class="d-flex bg-dark flex-column align-items-center" style="width: 100%">
-                <h2 class="fw-bold my-3 text-white">Data Users</h2>
+                <h2 class="fw-bold my-3 text-white">Data User</h2>
                 <div class="table-container" style="width: 90%">
                     <!-- Alert -->
                     <div class="col-auto col-lg-12 mt-2">
@@ -53,8 +53,8 @@
                                 <td><%= users[i].telp %></td>
                                 <td class="text-center"><%= users[i].umur %> Tahun</td>
                                 <td><%= users[i].alamat %></td>
-                                <td class="text-center"><%= users[i].isAktif %></td>
-                                <td class="text-center"><%= users[i].jenisUser %></td>
+                                <td class="text-center"><%= users[i].aktifsts %></td>
+                                <td class="text-center"><%= users[i].jenisusr %></td>
                                 <td class="text-center">
                                     <form 
                                     action="/users/<%= users[i].id %>?_method=DELETE"
@@ -68,8 +68,8 @@
                                         data-telp="<%= users[i].telp %>"
                                         data-umur="<%= users[i].umur %>"
                                         data-alamat="<%= users[i].alamat %>"
-                                        data-isAktif="<%= users[i].isAktif %>"
-                                        data-jenisUser="<%= users[i].jenisUser %>"
+                                        data-aktifsts="<%= users[i].aktifsts %>"
+                                        data-jenisusr="<%= users[i].jenisusr %>"
                                         data-username="<%= users[i].username %>"
                                         data-password="<%= users[i].password %>"
                                         >Edit</a>
@@ -113,8 +113,8 @@
                                 <input type="text" class="form-control" id="telp" name="telp" placeholder="Masukkan no telpon" required/>
                             </div>
                             <div class="form-group">
-                                <label for="name">Umur (Tahun)</label>
-                                <input type="number" class="form-control" id="umur" name="umur" placeholder="Masukkan umur" required/>
+                                <label for="name">Umur</label>
+                                <input type="number" class="form-control" id="umur" name="umur" placeholder="Masukkan umur user (Tahun)" required/>
                             </div>
                             <div class="form-group">
                                 <label for="name">Alamat</label>
@@ -122,7 +122,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="name">Status Aktif</label>
-                                <select class="form-control" id="isAktif" name="isAktif" required onclick="removeDefaultOption('isAktif')">
+                                <select class="form-control" id="aktifsts" name="aktifsts" required onclick="removeDefaultOption('aktifsts')">
                                     <option value="">Pilih Status Aktif</option>
                                     <option value="Aktif">Aktif</option>
                                     <option value="Non Aktif">Non Aktif</option>
@@ -130,7 +130,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="name">Jenis User</label>
-                                <select class="form-control" id="jenisUser" name="jenisUser" required onclick="removeDefaultOption('jenisUser')">
+                                <select class="form-control" id="jenisusr" name="jenisusr" required onclick="removeDefaultOption('jenisusr')">
                                     <option value="">Pilih Jenis User</option>
                                     <option value="Admin">Admin</option>
                                     <option value="Member">Member</option>
@@ -185,8 +185,8 @@
                                 <input type="text" class="form-control telp" name="telp" placeholder="Masukkan telp" required/>
                             </div>
                             <div class="form-group">
-                                <label for="name">Umur (Tahun)</label>
-                                <input type="number" class="form-control umur" name="umur" placeholder="Masukkan umur" required/>
+                                <label for="name">Umur</label>
+                                <input type="number" class="form-control umur" name="umur" placeholder="Masukkan umur user (Tahun)" required/>
                             </div>
                             <div class="form-group">
                                 <label for="name">Alamat</label>
@@ -194,16 +194,14 @@
                             </div>
                             <div class="form-group">
                                 <label for="name">Status Aktif</label>
-                                <select class="form-control isAktif" name="isAktif" required>
-                                    <option value="">Pilih Status Aktif</option>
+                                <select class="form-control aktifsts" name="aktifsts" required>
                                     <option value="Aktif">Aktif</option>
                                     <option value="Non Aktif">Non Aktif</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="name">Jenis User</label>
-                                <select class="form-control jenisUser" name="jenisUser" required>
-                                    <option value="">Pilih Jenis User</option> 
+                                <select class="form-control jenisusr" name="jenisusr" required>
                                     <option value="Admin">Admin</option>
                                     <option value="Member">Member</option>
                                     <option value="Pegawai">Pegawai</option>
@@ -241,8 +239,8 @@
                 let telp = $(this).data("telp");
                 let umur = $(this).data("umur");
                 let alamat = $(this).data("alamat");
-                let isAktif = $(this).data("isAktif");
-                let jenisUser = $(this).data("jenisUser");
+                let aktifsts = $(this).data("aktifsts");
+                let jenisusr = $(this).data("jenisusr");
                 let username= $(this).data("username");
                 let password= $(this).data("password");
 
@@ -253,8 +251,8 @@
                 $(".telp").val(telp);
                 $(".umur").val(umur);
                 $(".alamat").val(alamat);
-                $(".isAktif").val(isAktif);
-                $(".jenisUser").val(jenisUser);
+                $(".aktifsts").val(aktifsts);
+                $(".jenisusr").val(jenisusr);
                 $(".username").val(username);
                 $(".password").val(password);
             });

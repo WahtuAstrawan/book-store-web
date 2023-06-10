@@ -1,12 +1,12 @@
 const express = require("express");
-const Users = require("../models/Users");
+const User = require("../models/User");
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
 router.get("/", async(req, res) => {
     try{
         req.session.loggedIn = false;
-        const users = await Users.find();
+        const users = await User.find();
         const alertMessage = req.flash("alertMessage");
         const alertStatus = req.flash("alertStatus");
         const alert = {message: alertMessage, status: alertStatus};
@@ -21,12 +21,12 @@ router.get("/", async(req, res) => {
 router.post("/", async(req,res) => {
     try{
         const { username, password } = req.body;
-        const user = await Users.findOne({username});
+        const user = await User.findOne({username});
         if(user){
             const validPass = await bcrypt.compare(password, user.password);
             if(validPass){
                 req.session.loggedIn = true;
-                req.session.tipeUser = user.jenisUser;
+                req.session.tipeUser = user.jenisusr;
                 req.session.userName = username;
                 res.redirect("/home");
             }else{

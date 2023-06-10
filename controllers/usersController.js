@@ -1,11 +1,11 @@
-const Users = require("../models/Users");
+const User = require("../models/User");
 const bcrypt = require('bcrypt');
 
 module.exports = {
 
     viewUsers: async (req, res) => {
         try{
-            const users = await Users.find();
+            const users = await User.find();
     
             const alertMessage = req.flash("alertMessage");
             const alertStatus = req.flash("alertStatus");
@@ -32,9 +32,9 @@ module.exports = {
     },
     addUsers: async(req, res) =>{
         try{
-            const { nama, telp, umur, alamat, isAktif, jenisUser, username, password } = req.body;
+            const { nama, telp, umur, alamat, aktifsts, jenisusr, username, password } = req.body;
             
-            const existingUser = await Users.findOne({ username });
+            const existingUser = await User.findOne({ username });
             if (existingUser) {
                 req.flash("alertMessage", "Username sudah digunakan");
                 req.flash("alertStatus", "danger");
@@ -48,7 +48,7 @@ module.exports = {
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);
-            await Users.create({nama, telp, umur, alamat, isAktif, jenisUser, username, password:hashedPassword});
+            await User.create({nama, telp, umur, alamat, aktifsts, jenisusr, username, password:hashedPassword});
 
             req.flash("alertMessage", "Sukses menambahkan data user");
             req.flash("alertStatus", "success");
@@ -62,26 +62,30 @@ module.exports = {
 
     editUsers: async(req, res) =>{
         try{
-            const { id, nama, telp, umur, alamat, isAktif, jenisUser, username, password } = req.body;
+            const { id, nama, telp, umur, alamat, aktifsts, jenisusr, username, password } = req.body;
             
-            const users = await Users.findOne({_id: id});
+            const user = await User.findOne({_id: id});
 
-            users.nama = nama;
-            users.telp = telp;
-            users.umur = umur;
-            users.alamat = alamat;
-            users.isAktif = isAktif;
-            users.jenisUser = jenisUser;
-            users.username = username;
+            user.nama = nama;
+            user.telp = telp;
+            user.umur = umur;
+            user.alamat = alamat;
+            user.aktifsts = aktifsts;
+            user.jenisusr = jenisusr;
+            user.username = username;
             
             if(password.length == 60){
-                users.password = password;
+                user.password = password;
+            }else if(password.length > 30 && password.length < 60){
+                req.flash("alertMessage", "Panjang password tidak boleh lebih dari 30 karakter");
+                req.flash("alertStatus", "danger");
+                return res.redirect("/users");
             }else{
                 const hashedPassword = await bcrypt.hash(password, 10);
-                users.password = hashedPassword;
+                user.password = hashedPassword;
             }
 
-            await users.save();
+            await user.save();
 
             req.flash("alertMessage", "Sukses mengedit data user");
             req.flash("alertStatus", "success");
@@ -100,7 +104,7 @@ module.exports = {
         try{
             const {id} = req.params;
 
-            await Users.deleteOne({ _id: id});
+            await User.deleteOne({ _id: id});
 
             req.flash("alertMessage", "Sukses menghapus data user");
             req.flash("alertStatus", "warning");

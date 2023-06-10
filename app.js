@@ -9,6 +9,8 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 
+// Ganti umur (tahun) ke place holder
+
 mongoose.connect("mongodb://localhost:27017/db_zilong", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -20,6 +22,7 @@ console.log("Server berjalan pada : http://localhost/");
 const loginRouter = require("./routes/login")
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
+const booksRouter = require("./routes/books");
 
 const app = express();
 
@@ -63,6 +66,7 @@ app.use('/assets',express.static(path.join(__dirname, "public/images")));
 app.use("/", loginRouter);
 app.use("/home",requireLogin, indexRouter);
 app.use("/users",requireLogin, requireAdmin, usersRouter);
+app.use("/books",requireLogin, booksRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
