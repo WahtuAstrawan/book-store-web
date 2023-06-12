@@ -34,8 +34,8 @@ module.exports = {
         try{
             const { judul, penulis, penerbit, tahuntbt, kategori, harga, stok } = req.body;
 
-            if(harga < 0){
-                req.flash("alertMessage", "Harga buku tidak boleh kurang dari 0");
+            if(harga <= 0){
+                req.flash("alertMessage", "Harga buku tidak boleh kurang atau sama dengan 0");
                 req.flash("alertStatus", "danger");
                 return res.redirect("/books");
             }
@@ -72,8 +72,8 @@ module.exports = {
             book.harga = harga;
             book.stok = stok;
             
-            if(harga < 0){
-                req.flash("alertMessage", "Harga buku tidak boleh kurang dari 0");
+            if(harga <= 0){
+                req.flash("alertMessage", "Harga buku tidak boleh kurang atau sama dengan 0");
                 req.flash("alertStatus", "danger");
                 return res.redirect("/books");
             }

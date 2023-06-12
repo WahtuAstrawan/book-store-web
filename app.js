@@ -9,7 +9,8 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 
-// Ganti umur (tahun) ke place holder
+// Tambah CRUD Transaksi (EJS)
+// Tambahkan kondisi dari Status Aktif User pada login
 
 mongoose.connect("mongodb://localhost:27017/db_zilong", {
     useNewUrlParser: true,
@@ -23,6 +24,7 @@ const loginRouter = require("./routes/login")
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const booksRouter = require("./routes/books");
+const transactionRouter = require("./routes/transactions");
 
 const app = express();
 
@@ -56,6 +58,13 @@ const requireAdmin = (req, res, next) => {
     next();
 };
 
+const requirePegawai = (req, res, next) => {
+    if (req.session.tipeUser !== "Pegawai") {
+        return res.redirect('/');
+    }
+    next();
+};
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -67,6 +76,7 @@ app.use("/", loginRouter);
 app.use("/home",requireLogin, indexRouter);
 app.use("/users",requireLogin, requireAdmin, usersRouter);
 app.use("/books",requireLogin, booksRouter);
+app.use("/transactions",requireLogin, requirePegawai, transactionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

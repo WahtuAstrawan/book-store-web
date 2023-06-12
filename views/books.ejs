@@ -13,7 +13,7 @@
         <div class="d-flex">
             <%- include('./partials/sidebar.ejs') %>
             <main class="d-flex bg-dark flex-column align-items-center" style="width: 100%">
-                <h2 class="fw-bold my-3 text-white">Data Buku</h2>
+                <h2 class="fw-bold my-3 text-white">Daftar Buku</h2>
                 <div class="table-container" style="width: 90%">
                     <!-- Alert -->
                     <div class="col-auto col-lg-12 mt-2">
@@ -129,7 +129,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="name">Kategori Buku</label>
-                                <select class="form-control" id="kategori" name="kategori" required onclick="removeDefaultOption('kategori')">
+                                <select class="form-select" id="kategori" name="kategori" required onclick="removeDefaultOption('kategori')">
                                     <option value="">Pilih Kategori Buku</option>
                                     <option value="Fiksi">Fiksi</option>
                                     <option value="Nonfiksi">Nonfiksi</option>
@@ -193,7 +193,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="name">Kategori Buku</label>
-                                <select class="form-control kategori" name="kategori" required>
+                                <select class="form-select kategori" name="kategori" required>
                                     <option value="Fiksi">Fiksi</option>
                                     <option value="Nonfiksi">Nonfiksi</option>
                                     <option value="Pendidikan">Pendidikan</option>

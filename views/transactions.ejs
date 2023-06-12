@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head.ejs', { title }) %>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <div class="d-flex">
+            <%- include('./partials/sidebar.ejs') %>
+            <main class="d-flex bg-dark flex-column align-items-center" style="width: 100%">
+                <h2 class="fw-bold my-3 text-white">Daftar Transaksi</h2>
+                <div class="table-container" style="width: 90%">
+                    <!-- Alert -->
+                    <div class="col-auto col-lg-12 mt-2">
+                        <% if(alert.message != "") { %>
+                        <div class="alert alert-<%= alert.status %>" role="alert">
+                            <%= alert.message %>
+                        </div>
+                        <% } %>
+                    </div>
+                    <!-- Button trigger add modal -->
+                    <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#add-modal"
+                    >Tambah
+                    </button>
+                    <!-- Table of data -->
+                    <table class="table table-dark table-striped" style="vertical-align: middle" id="dataTable">
+                        <thead>
+                            <tr class="text-center">
+                                <th>No</th>
+                                <th>Nama Pembeli</th>
+                                <th>Waktu Transaksi</th>
+                                <th>Detail</th>
+                                <th>Harga Total</th>
+                                <th>Kasir</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(let i = 0; i < transactions.length; i++){ %>
+                            <tr>
+                                <td class="text-center"><%= i+1 %></td>
+                                <td>
+                                    <% members.forEach(member => { %>
+                                        <% if (transactions[i].idmember == member._id.toString()) { %>
+                                        <%= member.nama %>
+                                        <% } %>
+                                    <% }) %>
+                                </td>
+                                <td class="text-center"><%= moment(transactions[i].createdAt).locale('id').format('dddd, D MMMM YYYY HH:mm:ss') %></td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#detTransaksi-<%= transactions[i]._id %>">Lihat</button>
+                                    <!-- Detail Transaksi Modal -->
+                                    <div class="modal fade" 
+                                        id="detTransaksi-<%= transactions[i]._id %>"
+                                        data-keyboard="false" 
+                                        tabindex="-1" 
+                                        role="dialog"
+                                        aria-labelledby="exampleModalCenterTitle"
+                                        aria-hidden="true">
+                                      <div
+                                          class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-dark" id="exampleModalCenterTitle">Detail Transaksi</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                                            </div>
+                                          <div class="modal-body">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr class="text-center">
+                                                      <th scope="col">Judul Buku</th>
+                                                      <th scope="col">Harga Buku</th>
+                                                      <th scope="col">Banyak Beli</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% for(let j = 0; j < transactions[i].details.length; j ++){ %>
+                                                    <tr>
+                                                        <td>
+                                                            <% books.forEach(book => { %>
+                                                                <% if (transactions[i].details[j].idbuku == book._id.toString()) { %>
+                                                                <%= book.judul %>
+                                                                <% } %>
+                                                            <% }) %>
+                                                        </td>
+                                                        <td>
+                                                            <% books.forEach(book => { %>
+                                                                <% if (transactions[i].details[j].idbuku == book._id.toString()) { %>
+                                                                Rp.<%= book.harga %>
+                                                                <% } %>
+                                                            <% }) %>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <%= transactions[i].details[j].jmlbeli %> Unit
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                                </tbody>
+                                            </table>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Tutup</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">Rp.<%= transactions[i].hrgtotal %></td>
+                                <td><%= transactions[i].pegawaiusn %></td>
+                                <td class="text-center d-flex flex-row align-items-center justify-content-center"
+                                    style="gap: 5px">
+                                    <!-- Button modal edit transaction  -->
+                                    <button type="button" class="btn btn-warning btn-sm"
+                                        data-toggle="modal"
+                                        data-target="#editModal-<%= transactions[i]._id %>">
+                                    Edit
+                                    </button>
+                                    <!-- Modal edit transaction -->
+                                    <div
+                                    class="modal fade"
+                                    id="editModal-<%= transactions[i]._id %>"
+                                    tabindex="-1"
+                                    role="dialog"
+                                    aria-labelledby="exampleModalLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-dark" id="exampleModalLabel">Edit Transaksi</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                                            </div>
+                                            <form action="/transactions/<%= transactions[i]._id %>?_method=PUT" method="POST">
+                                                <div class="modal-body text-start">
+                                                    <!-- Select Member -->
+                                                    <div class="form-floating mb-3">
+                                                      <select name="idmember" class="form-select" id="floatingidmember"
+                                                          required>
+                                                        <% members.forEach(member => { %>
+                                                        <option value="<%= member._id %>"
+                                                            <% if (transactions[i].idmember == member._id.toString()) { %>
+                                                            selected <% } %>>
+                                                          <%= member.nama %></option>
+                                                        <% }) %>
+                                                      </select>
+                                                      <label for="floatingidmember">Pembeli</label>
+                                                    </div>
+                                          
+                                                    <!-- Edit Details -->
+                                                    <div class="mb-3" id="editDetails-<%= transactions[i]._id %>">
+                                                      Detail Transaksi
+                                                      <% let indexDetail = 1 %>
+                                                      <% transactions[i].details.forEach(detail => { %>
+                                                      <div id="editDetail-<%= transactions[i]._id %>-<%= indexDetail %>">
+                                                        <hr>
+                                                        <!-- Select book -->
+                                                        <div class="form-floating mb-3">
+                                                          <select name="idbuku" class="form-select mb-3"
+                                                              id="floatingidbuku" required>
+                                                            <% books.forEach(book => { %>
+                                                            <option value="<%= book._id %>"
+                                                                <% if (detail.idbuku == book._id.toString()) { %> selected
+                                                                <% } %>>
+                                                              <%= book.judul %> - Harga : Rp. <%= book.harga %> - Stok : <%= book.stok %> Unit</option>
+                                                            <% }) %>
+                                                          </select>
+                                                          <label for="floatingidbuku">Buku</label>
+                                                        </div>
+                                          
+                                                        <div class="row">
+                                                          <div class="col">
+                                                            <!-- Quantity -->
+                                                            <div class="form-floating mb-3">
+                                                              <input type="number" class="form-control" id="floatingjmlbeli"
+                                                                  placeholder="Jumlah Beli" name="jmlbeli"
+                                                                  value="<%= detail.jmlbeli %>" />
+                                                              <label for="floatingjmlbeli">Jumlah Beli</label>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                          
+                                                        <!-- Delete transaction group detail (above) -->
+                                                        <button type="button" class="btn btn-sm btn-warning"
+                                                            onclick="removeTransactionDetail('#editDetail-<%= transactions[i]._id %>-<%= indexDetail %>')">
+                                                            <i class="bi bi-dash"></i>
+                                                        </button>
+                                                      </div>
+                                                      <% indexDetail++ %>
+                                                      <% }) %>
+                                                    </div>
+                                                    <script>
+                                                        let lastIndex = parseInt($("#detailsLength").val()) + 1;
+                                            
+                                                        const addEditTransactionDetail = id => {
+                                                          $(id).append(`
+                                                        <div id="editDetail-<%= transactions[i]._id %>-${lastIndex}">
+                                                          <hr>
+                                                          <!-- Select book -->
+                                                          <div class="form-floating mb-3">
+                                                            <select name="idbuku" class="form-select mb-3"
+                                                                id="floatingidbuku" required>
+                                                              <% books.forEach(book => { %>
+                                                              <option value="<%= book._id %>">
+                                                                <%= book.judul %> - Harga : Rp. <%= book.harga %> - Stok : <%= book.stok %> Unit </option>
+                                                              <% }) %>
+                                                            </select>
+                                                            <label for="floatingidbuku">Buku</label>
+                                                          </div>
+                                            
+                                                          <div class="row">
+                                            
+                                                            <div class="col">
+                                                              <!-- Quantity -->
+                                                              <div class="form-floating mb-3">
+                                                                <input type="number" class="form-control" id="floatingjmlbeli"
+                                                                    placeholder="Jumlah Beli" name="jmlbeli" required />
+                                                                <label for="floatingjmlbeli">Jumlah Beli</label>
+                                                              </div>
+                                                            </div>
+                                                          </div>
+                                            
+                                                          <!-- Delete transaction group detail (above) -->
+                                                          <button type="button" class="btn btn-sm btn-warning"
+                                                              onclick="removeTransactionDetail('#editDetail-<%= transactions[i]._id %>-${lastIndex}')">
+                                                              <i class="bi bi-dash"></i>
+                                                          </button>
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                                Tutup
+                                                            </button>
+                                                            <button type="submit" class="btn btn-primary">Edit</button>
+                                                        </div>
+                                                        `);
+                                            
+                                                          lastIndex++;
+                                                        }
+                                                    </script>
+                                            
+                                                      <!-- Add transaction detail -->
+                                                      <button type="button" class="btn btn-sm btn-primary mb-3"
+                                                          onclick="addEditTransactionDetail('#editDetails-<%= transactions[i]._id %>')">
+                                                          <i class="bi bi-plus"></i>
+                                                      </button>
+                                                      <!-- End of Edit Details -->
+                                            
+                                                      <input type="hidden" id="detailsLength"
+                                                          value="<%= transactions[i].details.length %>">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                                Tutup
+                                                            </button>
+                                                            <button type="submit" class="btn btn-primary">Edit</button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Button delete transaction -->
+                                    <form
+                                        action="/transactions/<%= transactions[i]._id %>?_method=DELETE"
+                                        method="post">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Apa kamu yakin ingin menghapus data transaksi ini?');">
+                                        Hapus
+                                    </button>
+                                </form>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <!-- Add Modal -->
+        <div
+            class="modal fade"
+            id="add-modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Tambah Transaksi</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form action="/transactions" method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="name">Pembeli</label>
+                                <select class="form-select" id="idmember" name="idmember" required onclick="removeDefaultOption('idmember')">
+                                    <option value="">Pilih Nama Pembeli</option>
+                                    <% for(let i = 0; i < members.length; i++){ %>
+                                        <option value="<%= members[i]._id %>"><%= members[i].nama %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="inputDetails">
+                                Detail Transaksi
+                                <div id="detail-1">
+                                  <hr>
+                                  <!-- Select book -->
+                                  <div class="form-floating mb-3">
+                                    <select name="idbuku" class="form-select mb-3"
+                                        id="floatingidbuku" required onclick="removeDefaultOption('floatingidbuku')">
+                                      <option value="">Pilih Buku</option>
+                                      <% books.forEach(book => { %>
+                                      <option value="<%= book._id %>">
+                                        <%= book.judul %> - Harga: Rp. <%= book.harga %> - Stok : <%= book.stok %> Unit</option>
+                                      <% }) %>
+                                    </select>
+                                    <label for="floatingidbuku">Buku</label>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col">
+                                      <!-- Quantity -->
+                                      <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="floatingjmlbeli"
+                                            placeholder="Banyaknya buku" name="jmlbeli" />
+                                        <label for="floatingjmlbeli">Jumlah Beli</label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!-- Delete transaction group detail (above) -->
+                                  <button type="button" class="btn btn-sm btn-outline-warning"
+                                    onclick="removeTransactionDetail('#detail-1')">
+                                    <i class="bi bi-dash"></i>
+                                  </button>
+                                </div>
+                            </div>
+                            <!-- Add transaction detail -->
+                            <button type="button" class="btn btn-sm btn-primary mb-3"
+                            onclick="addTransactionDetail()">
+                            <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Tutup
+                            </button>
+                            <button type="submit" name="submit" class="btn btn-primary">Tambah</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <%- include('./partials/js.ejs') %>
+
+        <script>
+            function removeDefaultOption(fieldName) {
+                var defaultOption = document.querySelector('#' + fieldName + ' option[value=""]');
+                defaultOption.remove();
+            }
+
+            let detailId = 2;
+            const addTransactionDetail = () => {
+                $("#inputDetails").append(`
+                <div id="detail-${detailId}">
+                <hr>
+                <!-- Select book -->
+                <div class="form-floating mb-3">
+                    <select name="idbuku" class="form-select mb-3" id="floatingidbuku"
+                        required onclick="removeDefaultOption('floatingidbuku')">
+                    <option value="">Pilih Buku</option>
+                    <% books.forEach(book => { %>
+                    <option value="<%= book._id %>">
+                        <%= book.judul %> - Harga : Rp. <%= book.harga %> - Stok : <%= book.stok %> Unit</option>
+                    <% }) %>
+                    </select>
+                    <label for="floatingidbuku">Buku</label>
+                </div>
+
+                <div class="row">
+                  <div class="col">
+                    <!-- Quantity -->
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="floatingjmlbeli"
+                            placeholder="Banyaknya buku" name="jmlbeli" required/>
+                        <label for="floatingjmlbeli">Jumlah beli</label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Delete transaction group detail (above) -->
+                <button type="button" class="btn btn-sm btn-warning"
+                    onclick="removeTransactionDetail('#detail-${detailId}')">
+                    <i class="bi bi-dash"></i>
+                </button>
+                </div>
+                `);
+
+                detailId++;
+            }
+            const removeTransactionDetail = id => $(id).remove();
+        </script>
+    </body>
+</html>

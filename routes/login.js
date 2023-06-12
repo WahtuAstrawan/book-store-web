@@ -24,12 +24,17 @@ router.post("/", async(req,res) => {
         const user = await User.findOne({username});
         if(user){
             const validPass = await bcrypt.compare(password, user.password);
-            if(validPass){
+            const validStatus = user.aktifsts === 'Aktif';
+            if(validPass && validStatus){
                 req.session.loggedIn = true;
                 req.session.tipeUser = user.jenisusr;
                 req.session.userName = username;
                 res.redirect("/home");
-            }else{
+            }else if(!validStatus){
+                req.flash("alertMessage", "Status dari akun user tidak aktif");
+                req.flash("alertStatus", "danger");
+                res.redirect("/");
+            }else if(!validPass){
                 req.flash("alertMessage", "Password yang dimasukkan salah");
                 req.flash("alertStatus", "danger");
                 res.redirect("/");

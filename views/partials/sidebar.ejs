@@ -12,21 +12,9 @@
         </li>
         <% if (tipeUser === "Admin") { %>
             <li class="nav-item">
-                <a href="/books" class="nav-link text-white fs-5">
-                    <i class="bi bi-book-half pe-2"></i>
-                    <p class="d-inline">Books</p>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a href="/users" class="nav-link text-white fs-5">
                     <i class="bi bi-person-vcard-fill pe-2"></i>
                     <p class="d-inline">Users</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="/transactions" class="nav-link text-white fs-5">
-                    <i class="bi bi-cash-coin pe-2"></i>
-                    <p class="d-inline">Transactions</p>
                 </a>
             </li>
         <% } else if (tipeUser === "Member") { %>
