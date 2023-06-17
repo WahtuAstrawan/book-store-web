@@ -24,7 +24,7 @@
                         <% } %>
                     </div>
                     <!-- Button trigger modal -->
-                    <% if (tipeUser === "Pegawai") { %>
+                    <% if (tipeUser === "Pegawai" || tipeUser === "Admin") { %>
                         <button 
                         type="button" 
                         class="btn btn-primary" 
@@ -45,7 +45,7 @@
                                 <th>Kategori</th>
                                 <th>Harga</th>
                                 <th>Stok</th>
-                                <% if (tipeUser === "Pegawai") { %>
+                                <% if (tipeUser === "Pegawai" || tipeUser === "Admin") { %>
                                 <th>Aksi</th>
                                 <% } %>
                             </tr>
@@ -61,7 +61,7 @@
                                 <td class="text-center"><%= books[i].kategori %></td>
                                 <td class="text-center">Rp.<%= books[i].harga %></td>
                                 <td class="text-center"><%= books[i].stok %> Unit</td>
-                                <% if (tipeUser === "Pegawai") { %>
+                                <% if (tipeUser === "Pegawai" || tipeUser === "Admin") { %>
                                 <td class="text-center">
                                     <form 
                                     action="/books/<%= books[i].id %>?_method=DELETE"

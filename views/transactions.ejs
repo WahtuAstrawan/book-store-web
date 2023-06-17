@@ -133,7 +133,7 @@
                                     role="dialog"
                                     aria-labelledby="exampleModalLabel"
                                     aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                                    <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title text-dark" id="exampleModalLabel">Edit Transaksi</h5>
@@ -235,12 +235,6 @@
                                                           </button>
                                                         </div>
 
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                                Tutup
-                                                            </button>
-                                                            <button type="submit" class="btn btn-primary">Edit</button>
-                                                        </div>
                                                         `);
                                             
                                                           lastIndex++;
@@ -253,27 +247,26 @@
                                                           <i class="bi bi-plus"></i>
                                                       </button>
                                                       <!-- End of Edit Details -->
-                                            
-                                                      <input type="hidden" id="detailsLength"
-                                                          value="<%= transactions[i].details.length %>">
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                                Tutup
+                                                      <div class="modal-footer">
+                                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                              Tutup
                                                             </button>
                                                             <button type="submit" class="btn btn-primary">Edit</button>
+                                                      </div>
                                                     </div>
-                                                  </div>
                                                 </div>
-                                              </div>
-                                            </form>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <!-- Button delete transaction -->
+                                    </form>
+                                </div>
+                                <input type="hidden" id="detailsLength"
+                                    value="<%= transactions[i].details.length %>">
+                            </div>
+                            
+                            <!-- Button delete transaction -->
                                     <form
                                         action="/transactions/<%= transactions[i]._id %>?_method=DELETE"
-                                        method="post">
+                                        method="POST">
                                         <button type="submit" class="btn btn-danger btn-sm"
                                         onclick="return confirm('Apa kamu yakin ingin menghapus data transaksi ini?');">
                                         Hapus

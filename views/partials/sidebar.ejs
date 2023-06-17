@@ -1,4 +1,4 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 230px; min-height: 100vh; height: 100%">
+<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 230px; min-height: 100vh; overflow-y: auto;">
     <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
         <span class="fs-3 fw-bold">Z I L O N G Books Store</span>
     </a>
@@ -15,6 +15,24 @@
                 <a href="/users" class="nav-link text-white fs-5">
                     <i class="bi bi-person-vcard-fill pe-2"></i>
                     <p class="d-inline">Users</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/books" class="nav-link text-white fs-5">
+                    <i class="bi bi-book-half pe-2"></i>
+                    <p class="d-inline">Books</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/transactions" class="nav-link text-white fs-5">
+                    <i class="bi bi-cash-coin pe-2"></i>
+                    <p class="d-inline">Transactions</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/reports" class="nav-link text-white fs-5">
+                    <i class="fas fa-chart-bar pe-2"></i>
+                    <p class="d-inline">Reports</p>
                 </a>
             </li>
         <% } else if (tipeUser === "Member") { %>
@@ -37,8 +55,13 @@
                     <p class="d-inline">Transactions</p>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="/reports" class="nav-link text-white fs-5">
+                    <i class="fas fa-chart-bar pe-2"></i>
+                    <p class="d-inline">Reports</p>
+                </a>
+            </li>
         <% } %>
-        
     </ul>
     <hr />
     <div class="dropdown">
@@ -47,7 +70,7 @@
             <strong><%= userName %></strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-            <li><a class="dropdown-item" href="/">Sign out</a></li>
+            <li><a class="dropdown-item" href="/">Logout</a></li>
         </ul>
     </div>
 </div>

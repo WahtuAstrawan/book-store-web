@@ -60,6 +60,9 @@ module.exports = {
                         req.flash("alertStatus", "danger");
                         return res.redirect("/transactions");
                     }
+                    book.jmlbeli += parseInt(jmlbeli[i]);
+                    book.stok -= parseInt(jmlbeli[i]);
+                    await book.save();
                 }
             }else{
                 let book = await Book.findOne({ _id: idbuku });
@@ -74,6 +77,9 @@ module.exports = {
                     req.flash("alertStatus", "danger");
                     return res.redirect("/transactions");
                 }
+                book.jmlbeli += parseInt(jmlbeli);
+                book.stok -= parseInt(jmlbeli);
+                await book.save();
             }
             
         
@@ -91,13 +97,17 @@ module.exports = {
 
     editTransactions: async(req, res) =>{
         try{
-            const { idmember, idbuku, jmlbeli } = req.body;
-            const pegawaiusn = req.session.userName;
+            const { idmember, idbuku, jmlbeli, pegawaiusn } = req.body;
+
+            const transaction = await Transaction.findById(req.params.id);
+
+            if(req.session.tipeUser === "Pegawai" && req.session.userName === pegawaiusn){
+                pegawaiusn = req.session.userName;
+            }
         
             let hrgtotal = 0;
             let details = [];
 
-            
             if(Array.isArray(idbuku)){
                 for (let i = 0; i < idbuku.length; i++) {
                     let book = await Book.findOne({ _id: idbuku[i] });
@@ -107,11 +117,19 @@ module.exports = {
                     };
                     details.push(detail);
                     hrgtotal += book.harga * jmlbeli[i];
+
+                    const detailBuku = transaction.details.find((detail) => detail.idbuku.toString() === idbuku[i].toString());
+
                     if(jmlbeli[i] > book.stok){
                         req.flash("alertMessage", `Tidak dapat membeli buku ${book.judul} dengan jumlah ${jmlbeli[i]} karena stok kurang`);
                         req.flash("alertStatus", "danger");
                         return res.redirect("/transactions");
                     }
+                    let jmlLakuawl = book.jmlbeli - detailBuku.jmlbeli;
+                    book.jmlbeli = jmlLakuawl + parseInt(jmlbeli[i]);
+                    let stokawl = book.stok + detailBuku.jmlbeli;
+                    book.stok = stokawl - parseInt(jmlbeli[i]);
+                    await book.save();
                 }
             }else{
                 let book = await Book.findOne({ _id: idbuku });
@@ -121,11 +139,20 @@ module.exports = {
                 };
                 details.push(detail);
                 hrgtotal += book.harga * jmlbeli;
+
+                const detailBuku = transaction.details.find((detail) => detail.idbuku.toString() === idbuku.toString());
+
                 if(jmlbeli > book.stok){
                     req.flash("alertMessage", `Tidak dapat membeli buku ${book.judul} dengan jumlah ${jmlbeli} karena stok kurang`);
                     req.flash("alertStatus", "danger");
                     return res.redirect("/transactions");
                 }
+
+                let jmlLakuawl = book.jmlbeli - detailBuku.jmlbeli;
+                book.jmlbeli = jmlLakuawl + parseInt(jmlbeli);
+                let stokawl = book.stok + detailBuku.jmlbeli;
+                book.stok = stokawl - parseInt(jmlbeli);
+                await book.save();
             }
 
             await Transaction.findByIdAndUpdate(req.params.id, {
@@ -151,7 +178,6 @@ module.exports = {
     deleteTransactions: async(req,res) =>{
         try{
             const {id} = req.params;
-            console.log(id);
 
             await Transaction.deleteOne({_id: id});
 

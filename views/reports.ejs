@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head.ejs', { title }) %>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <div class="d-flex">
+            <%- include('./partials/sidebar.ejs') %>
+            <main class="d-flex bg-dark flex-column align-items-center" style="width: 100%">
+                <h2 class="fw-bold my-3 text-white">Report Data</h2>
+                <div class="table-container" style="width: 90%">
+                    <!-- Alert -->
+                    <div class="col-auto col-lg-12 mt-2">
+                        <% if(alert.message != "") { %>
+                        <div class="alert alert-<%= alert.status %>" role="alert">
+                            <%= alert.message %>
+                        </div>
+                        <% } %>
+                    </div>
+                    
+                    <div class="col-auto col-lg-12 mt-2">
+                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#advanceFilterModal">
+                            <i class="fas fa-filter"></i> Filter Spesifik
+                        </button>
+                    </div>
+
+                    <!-- Pilihan Collection dan Search Bar (General) -->
+                    <div class="col-auto col-lg-12 mt-2">
+                        <form action="/reports/general" method="GET" class="d-flex justify-content-between">
+                            <div class="form-group" id="chooseCollection">
+                                <label class="form-check-label text-white" for="chooseCollection">
+                                    Pilih Data :
+                                </label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="collection" id="usersRadio" value="users" required onchange="updateFieldOptions()">
+                                    <label class="form-check-label text-white" for="usersRadio">
+                                        User
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="collection" id="transactionsRadio" value="transactions" required onchange="updateFieldOptions()">
+                                    <label class="form-check-label text-white" for="transactionsRadio">
+                                        Transaksi
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="collection" id="booksRadio" value="books" required onchange="updateFieldOptions()">
+                                    <label class="form-check-label text-white" for="booksRadio">
+                                        Buku
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="fieldOptions">
+                                <label class="text-white">Urutkan berdasarkan :</label>
+                                <select class="form-select form-select-sm" id="fieldSelect" name="field">
+                                  <option value="">Pilih Nama Atribut</option>
+                                </select>
+                              </div>
+                              
+                            <script>
+                                function updateFieldOptions() {
+                                  const usersRadio = document.getElementById('usersRadio');
+                                  const transactionsRadio = document.getElementById('transactionsRadio');
+                                  const booksRadio = document.getElementById('booksRadio');
+                                  const fieldSelect = document.getElementById('fieldSelect');
+
+                                  while (fieldSelect.options.length > 0) {
+                                    fieldSelect.remove(0);
+                                  }
+                              
+                                  if (usersRadio.checked) {
+                                    const options = [
+                                      { value: '', label: 'Pilih Nama Atribut' },
+                                      { value: 'nama', label: 'Nama' },
+                                      { value: 'telp', label: 'No Telpon' },
+                                      { value: 'umur', label: 'Umur' },
+                                      { value: 'alamat', label: 'Alamat' },
+                                      { value: 'aktifsts', label: 'Status Aktif' },
+                                      { value: 'jenisusr', label: 'Jenis User' },
+                                      { value: 'username', label: 'Username' }
+                                    ];
+                              
+                                    options.forEach(option => {
+                                      const newOption = document.createElement('option');
+                                      newOption.value = option.value;
+                                      newOption.text = option.label;
+                                      fieldSelect.add(newOption);
+                                    });
+                                  } else if(transactionsRadio.checked){
+                                    const options = [
+                                      { value: '', label: 'Pilih Nama Atribut' },
+                                      { value: 'idmember', label: 'Nama Pembeli' },
+                                      { value: 'hrgtotal', label: 'Harga Total' },
+                                      { value: 'pegawaiusn', label: 'Kasir' },
+                                      { value: 'createdAt', label: 'Tanggal Transaksi' }
+                                    ];
+                              
+                                    options.forEach(option => {
+                                      const newOption = document.createElement('option');
+                                      newOption.value = option.value;
+                                      newOption.text = option.label;
+                                      fieldSelect.add(newOption);
+                                    });
+                                  } else if(booksRadio.checked){
+                                    const options = [
+                                      { value: '', label: 'Pilih Nama Atribut' },
+                                      { value: 'judul', label: 'Judul' },
+                                      { value: 'penulis', label: 'Penulis' },
+                                      { value: 'penerbit', label: 'Penerbit' },
+                                      { value: 'tahuntbt', label: 'Tahun Terbit' },
+                                      { value: 'kategori', label: 'Kategori' },
+                                      { value: 'harga', label: 'Harga' },
+                                      { value: 'stok', label: 'Stok' },
+                                      { value: 'jmlbeli', label: 'Jumlah dibeli' },
+                                    ];
+                              
+                                    options.forEach(option => {
+                                      const newOption = document.createElement('option');
+                                      newOption.value = option.value;
+                                      newOption.text = option.label;
+                                      fieldSelect.add(newOption);
+                                    });
+                                  }
+                                }
+                            </script>
+                            <div class="form-group" id="sortOptions">
+                                <label class="text-white">Urutkan Secara :</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="sortAscending" name="sort" value="1">
+                                        <label class="form-check-label text-white" for="sortAscending">Ascending</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="sortDescending" name="sort" value="-1">
+                                        <label class="form-check-label text-white" for="sortDescending">Descending</label>
+                                    </div>
+                                </div>
+                            </div>                    
+                            <div class="input-group mt-4" style="width: 40%; height: 50%;">
+                                <label class="text-white mr-3" for="searchInput">Cari :</label>
+                                <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Masukkan kata kunci" name="search">
+                                <div class="input-group-append">
+                                  <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+ 
+                    <table class="table table-dark table-striped" style="vertical-align: middle" id="dataTable">
+                        <thead>
+                            <tr class="text-center">
+                                <% if(Object.keys(filter).length === 0){ %>
+                                <th>-</th>
+                                <th>-</th>
+                                <th>-</th>
+                                <th>-</th>
+                                <th>-</th>
+                                <th>-</th>
+                                <th>-</th>
+                                <th>-</th>
+                                <% } else if(collection === 'users'){ %>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>No Telpon</th>
+                                <th>Umur</th>
+                                <th>Alamat</th>
+                                <th>Status Aktif</th>
+                                <th>Jenis User</th>
+                                <% } else if(collection === 'books'){ %>
+                                <th>No</th>
+                                <th>Judul</th>
+                                <th>Penulis</th>
+                                <th>Penerbit</th>
+                                <th>Tahun Terbit</th>
+                                <th>Kategori</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th>Jumlah Dibeli</th>
+                                <% } else if(collection === 'transactions'){ %>
+                                <th>No</th>
+                                <th>Nama Pembeli</th>
+                                <th>Waktu Transaksi</th>
+                                <th>Detail</th>
+                                <th>Harga Total</th>
+                                <th>Kasir</th>
+                                <% } %>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(Object.keys(filter).length === 0){ %>
+                                <tr>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
+                                </tr>
+                            <% } else if(collection === 'users'){ %>
+                                <% for(let i = 0; i < filter.length; i++){ %>
+                                <tr>
+                                    <td class="text-center"><%= i+1 %></td>
+                                    <td><%= filter[i].nama %></td>
+                                    <td><%= filter[i].telp %></td>
+                                    <td class="text-center"><%= filter[i].umur %> Tahun</td>
+                                    <td><%= filter[i].alamat %></td>
+                                    <td class="text-center"><%= filter[i].aktifsts %></td>
+                                    <td class="text-center"><%= filter[i].jenisusr %></td>
+                                </tr>
+                                <% } %>
+                            <% } else if(collection === 'books'){ %>
+                                <% for(let i = 0; i < filter.length; i++){ %>
+                                    <tr>
+                                        <td class="text-center"><%= i+1 %></td>
+                                        <td ><%= filter[i].judul %></td>
+                                        <td class="text-center"><%= filter[i].penulis %></td>
+                                        <td class="text-center"><%= filter[i].penerbit %></td>
+                                        <td class="text-center"><%= filter[i].tahuntbt %></td>
+                                        <td class="text-center"><%= filter[i].kategori %></td>
+                                        <td class="text-center">Rp.<%= filter[i].harga %></td>
+                                        <td class="text-center"><%= filter[i].stok %> Unit</td>
+                                        <td class="text-center"><%= filter[i].jmlbeli %> Unit</td>
+                                    </tr>
+                                <% } %>
+                            <% } else if(collection === 'transactions'){ %>
+                                <% for(let i = 0; i < filter.length; i++){ %>
+                                    <tr>
+                                        <td class="text-center"><%= i+1 %></td>
+                                        <td>
+                                            <% users.forEach(user => { %>
+                                                <% if (filter[i].idmember == user._id.toString()) { %>
+                                                <%= user.nama %>
+                                                <% } %>
+                                            <% }) %>
+                                        </td>
+                                        <td class="text-center"><%= moment(filter[i].createdAt).locale('id').format('dddd, D MMMM YYYY HH:mm:ss') %></td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#detTransaksi-<%= filter[i]._id %>">Lihat</button>
+                                            <!-- Detail Transaksi Modal -->
+                                            <div class="modal fade" 
+                                                id="detTransaksi-<%= filter[i]._id %>"
+                                                data-keyboard="false" 
+                                                tabindex="-1" 
+                                                role="dialog"
+                                                aria-labelledby="exampleModalCenterTitle"
+                                                aria-hidden="true">
+                                              <div
+                                                  class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title text-dark" id="exampleModalCenterTitle">Detail Transaksi</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                                                    </div>
+                                                  <div class="modal-body">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr class="text-center">
+                                                              <th scope="col">Judul Buku</th>
+                                                              <th scope="col">Harga Buku</th>
+                                                              <th scope="col">Banyak Beli</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% for(let j = 0; j < filter[i].details.length; j ++){ %>
+                                                            <tr>
+                                                                <td>
+                                                                    <% books.forEach(book => { %>
+                                                                        <% if (filter[i].details[j].idbuku == book._id.toString()) { %>
+                                                                        <%= book.judul %>
+                                                                        <% } %>
+                                                                    <% }) %>
+                                                                </td>
+                                                                <td>
+                                                                    <% books.forEach(book => { %>
+                                                                        <% if (filter[i].details[j].idbuku == book._id.toString()) { %>
+                                                                        Rp.<%= book.harga %>
+                                                                        <% } %>
+                                                                    <% }) %>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <%= filter[i].details[j].jmlbeli %> Unit
+                                                                </td>
+                                                            </tr>
+                                                            <% } %>
+                                                        </tbody>
+                                                    </table>
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Tutup</button>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">Rp.<%= filter[i].hrgtotal %></td>
+                                        <td><%= filter[i].pegawaiusn %></td>
+                                    </tr>
+                                <% } %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <!-- Advance Filter Modal -->
+        <div
+            class="modal fade"
+            id="advanceFilterModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Filter Data Spesifik</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span></button>
+                    </div>
+                        <div class="modal-body">
+                            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#userForm">User</button>
+                            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#transaksiForm">Transaksi</button>
+                            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#bukuForm">Buku</button>
+                            
+                            <div class="collapse" id="userForm">
+                                <br>
+                                <form action="/reports/specific" method="GET">
+                                    <div class="form-group">
+                                        <label for="name">Harga</label>
+                                        <input type="number" class="form-control harga" name="harga" placeholder="Masukkan harga buku (Rupiah)" required/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">Stok</label>
+                                        <input type="number" class="form-control stok" name="stok" placeholder="Masukkan stok buku (Unit)" required/>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                            Tutup
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">Cari</button>
+                                    </div>
+                                </form>
+                            </div>
+                      
+                            <div class="collapse" id="transaksiForm">
+                                <br>
+                                <form action="/reports/specific" method="GET">
+                                  <!-- Form untuk filter transaksi -->
+                                </form>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                        Tutup
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Cari</button>
+                                </div>
+                            </div>
+                      
+                            <div class="collapse" id="bukuForm">
+                                <br>
+                                <form action="/reports/specific" method="GET">
+                                  <!-- Form untuk filter buku -->
+                                </form>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                        Tutup
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Cari</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <%- include('./partials/js.ejs') %>
+        <script>
+        </script>
+    </body>
+</html>
