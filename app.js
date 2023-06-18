@@ -9,8 +9,7 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 
-// Tambah Report Untuk Filter
-// Perbaiki bug edit jumlah beli
+// Tambah Filter Spesifik
 
 mongoose.connect("mongodb://localhost:27017/db_zilong", {
     useNewUrlParser: true,
