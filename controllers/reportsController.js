@@ -35,6 +35,8 @@ module.exports = {
             const collection = req.query.collection;
             const sort = req.query.sort || 1;
             const search = req.query.search || "";
+            const limit = req.query.limit || null;
+
             let filter = {};
 
             if(collection === 'users'){
@@ -49,7 +51,7 @@ module.exports = {
                   {jenisusr:{$regex: new RegExp(search, 'i')}},
                   {username:{$regex: new RegExp(search, 'i')}},
                 ]
-              }).sort({ [field]: sort });
+              }).sort({ [field]: sort }).limit(limit);
 
             }else if(collection === 'transactions'){
               const field = req.query.field || 'hrgtotal';
@@ -65,7 +67,7 @@ module.exports = {
                   { pegawaiusn: { $regex: new RegExp(search, 'i') } },
                   { createdAt: isNaN(dateSearch) ? null : { $gte: startDate, $lte: endDate }},
                 ]
-              }).populate('idmember', 'nama').populate('details.idbuku', 'judul').sort({ [field]: sort });
+              }).populate('idmember', 'nama').populate('details.idbuku', 'judul').sort({ [field]: sort }).limit(limit);
             }else if(collection === 'books'){
               const field = req.query.field || 'judul';
               filter = await Book.find({
@@ -79,7 +81,7 @@ module.exports = {
                   {stok:isNaN(parseInt(search)) ? null : { $eq: parseInt(search) }},
                   {jmlbeli:isNaN(parseInt(search)) ? null : { $eq: parseInt(search) }},
                 ]
-              }).sort({ [field]: sort });
+              }).sort({ [field]: sort }).limit(limit);
             }
     
             const alertMessage = req.flash("alertMessage");
@@ -108,25 +110,50 @@ module.exports = {
             let filter = {};
             
             if(collection === 'users'){
-              const umur1 = req.query.umur1;
-              const condition1 = req.query.condition1;
-              const umur2 = req.query.umur2 || null;
-              const condition2 = req.query.condition2 || null;
+              const field = req.query.field;
+              if(field === 'umur'){
+                const umur1 = req.query.umur1;
+                const condition1 = req.query.condition1;
+                const umur2 = req.query.umur2 || null;
+                const condition2 = req.query.condition2 || null;
+  
+                if( condition2 && condition1 === '$eq'){
+                  req.flash("alertMessage", "Jika kondisi 1 -> (sama dengan) maka tidak dapat mengisi kondisi ke 2");
+                  req.flash("alertStatus", "danger");
+                  return res.redirect("/reports");
+                }
+  
+                if(umur2 && condition2){
+                  filter = await User.find({
+                    umur: {[condition1]: umur1, [condition2]: umur2},
+                  }).sort({ umur: sort }).limit(limit);
+                }else{
+                  filter = await User.find({
+                    umur: {[condition1]: umur1},
+                  }).sort({ umur: sort }).limit(limit);
+                }
+              }else if(field === 'jenisusr'){
+                const userkategori = req.query.userkategori;
+                const aktifsts = req.query.aktifsts || "";
+                const search = req.query.search;
+                const selectedCategories = Array.isArray(userkategori) ? userkategori : [userkategori];
+                console.log(aktifsts);
 
-              if( condition2 && condition1 === '$eq'){
-                req.flash("alertMessage", "Jika kondisi 1 -> (sama dengan) maka tidak dapat mengisi kondisi ke 2");
-                req.flash("alertStatus", "danger");
-                return res.redirect("/reports");
-              }
-
-              if(umur2 && condition2){
                 filter = await User.find({
-                  umur: {[condition1]: umur1, [condition2]: umur2},
-                }).sort({ umur: sort }).limit(limit);
-              }else{
-                filter = await User.find({
-                  umur: {[condition1]: umur1},
-                }).sort({ umur: sort }).limit(limit);
+                  $and: [
+                    {
+                      "$or": [
+                        { nama: { $regex: new RegExp(search, 'i') } },
+                        { telp: { $regex: new RegExp(search, 'i') } },
+                        { umur: isNaN(parseInt(search)) ? null : { $eq: parseInt(search) }},
+                        { alamat: { $regex: new RegExp(search, 'i') } },
+                        { username: { $regex: new RegExp(search, 'i') } },
+                      ]
+                    },
+                    { jenisusr: { $in: selectedCategories } },
+                    { aktifsts: { $regex: new RegExp(aktifsts, 'i') }}
+                  ]
+                }).sort({ [field]: sort }).limit(limit);
               }
             }else if(collection === 'transactions'){
               const field = req.query.field;
@@ -290,6 +317,27 @@ module.exports = {
                     jmlbeli: {[conditionbeli1]: beli1},
                   }).sort({ jmlbeli: sort }).limit(limit);
                 }
+              }else if(field === 'kategori'){
+                const bukukategori = req.query.bukukategori;
+                const search = req.query.search;
+                const selectedCategories = Array.isArray(bukukategori) ? bukukategori : [bukukategori];
+
+                filter = await Book.find({
+                  $and: [
+                    {
+                      "$or": [
+                        { judul: { $regex: new RegExp(search, 'i') } },
+                        { penulis: { $regex: new RegExp(search, 'i') } },
+                        { penerbit: { $regex: new RegExp(search, 'i') } },
+                        { tahuntbt: isNaN(parseInt(search)) ? null : { $eq: parseInt(search) } },
+                        { harga: isNaN(parseInt(search)) ? null : { $eq: parseInt(search) } },
+                        { stok: isNaN(parseInt(search)) ? null : { $eq: parseInt(search) } },
+                        { jmlbeli: isNaN(parseInt(search)) ? null : { $eq: parseInt(search) } }
+                      ]
+                    },
+                    { kategori: { $in: selectedCategories } }
+                  ]
+                }).sort({ [field]: sort }).limit(limit);
               }
             }
     

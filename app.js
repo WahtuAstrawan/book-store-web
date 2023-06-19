@@ -9,8 +9,6 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 
-// Tambah Filter Spesifik
-
 mongoose.connect("mongodb://localhost:27017/db_zilong", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -77,7 +75,7 @@ app.use("/home",requireLogin, indexRouter);
 app.use("/users",requireLogin, requireAdmin, usersRouter);
 app.use("/books",requireLogin, booksRouter);
 app.use("/transactions", requireLogin, requireInternal, transactionsRouter);
-app.use("/reports", requireLogin, requireInternal, reportsRouter);
+app.use("/reports", requireLogin, reportsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

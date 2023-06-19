@@ -138,8 +138,12 @@
                                   <option value="1">Ascending</option>
                                   <option value="-1">Descending</option>
                                 </select>
-                            </div>                   
-                            <div class="input-group mt-4" style="width: 40%; height: 50%;">
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="text-white">Limit :</label>
+                                <input type="number" class="form-control form-control-sm" name="limit" placeholder="Batasan lihat dokumen"/>
+                            </div>
+                            <div class="input-group mt-4" style="width: 30%; height: 50%;">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1">Cari :</span>
                                 </div>
@@ -335,67 +339,139 @@
                             
                             <div class="collapse" id="userForm">
                                 <br>
-                                <form action="/reports/specific" method="GET">
-                                    <input type="hidden" class="form-group" name="collection" value="users" />
-                                    <hr style="border: none; border-top: 3px solid black; width: 100%">
-                                    <p class="text-center">Filter spesifik umur user</p>
-                                    <hr style="border: none; border-top: 3px solid black; width: 100%">
-                                    <div class="form-group">
-                                        <label for="name">Kondisi 1</label>
-                                        <select class="form-select" name="condition1" required>
-                                            <option value="">Pilih Kondisi</option>
-                                            <option value="$gt">></option>
-                                            <option value="$lt"><</option>
-                                            <option value="$gte">>=</option>
-                                            <option value="$lte"><=</option>
-                                            <option value="$eq">==</option>
-                                        </select>
+                                <div class="form-group">
+                                    <label for="field">Pilih Opsi Filter User :</label>
+                                    <select class="form-select" name="field" id="field" onchange="toggleInput(this)">
+                                      <option value="">Pilih Opsi Filter</option>
+                                      <option value="umur">Umur</option>
+                                      <option value="jenisusr">Cari dengan Kategori</option>
+                                    </select>
+                                </div>
+                                <div id="inputGroup">
+                                    <div id="umur" style="display: none;">
+                                        <form action="/reports/specific" method="GET">
+                                            <hr style="border: none; border-top: 3px solid black; width: 100%">
+                                            <p class="text-center">Filter spesifik umur user</p>
+                                            <hr style="border: none; border-top: 3px solid black; width: 100%">
+                                            <input type="hidden" class="form-group" name="collection" value="users" />
+                                            <input type="hidden" class="form-group" name="field" value="umur" />
+                                            <div class="form-group">
+                                                <label for="name">Kondisi 1</label>
+                                                <select class="form-select" name="condition1" required>
+                                                    <option value="">Pilih Kondisi</option>
+                                                    <option value="$gt">></option>
+                                                    <option value="$lt"><</option>
+                                                    <option value="$gte">>=</option>
+                                                    <option value="$lte"><=</option>
+                                                    <option value="$eq">==</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="name">Nilai umur 1</label>
+                                                <input type="number" class="form-control" name="umur1" placeholder="Masukkan umur (tahun)" required/>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="name">Kondisi 2</label>
+                                                <select class="form-select" name="condition2">
+                                                    <option value="">Pilih Kondisi</option>
+                                                    <option value="$gt">></option>
+                                                    <option value="$lt"><</option>
+                                                    <option value="$gte">>=</option>
+                                                    <option value="$lte"><=</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="name">Nilai umur 2</label>
+                                                <input type="number" class="form-control" name="umur2" placeholder="Masukkan umur (tahun)"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="name">Urutkan Secara</label>
+                                                <select class="form-select" name="sort">
+                                                    <option value="">Pilih Metode Pengurutan</option>
+                                                    <option value="1">Ascending</option>
+                                                    <option value="-1">Descending</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="name">Limit hasil pencarian</label>
+                                                <input type="number" class="form-control" name="limit" placeholder="Masukkan banyaknya batasan lihat dokumen"/>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                    Tutup
+                                                </button>
+                                                <button type="submit" class="btn btn-primary">Cari</button>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="name">Nilai umur 1</label>
-                                        <input type="number" class="form-control" name="umur1" placeholder="Masukkan umur (tahun)" required/>
+                                    <div id="jenisusr" style="display: none;">
+                                            <hr style="border: none; border-top: 3px solid black; width: 100%">
+                                            <p class="text-center">Filter spesifik cari dengan kategori user</p>
+                                            <hr style="border: none; border-top: 3px solid black; width: 100%">
+                                              <form action="/reports/specific" method="GET" onsubmit="return validateForm('userkategori')">
+                                                  <input type="hidden" class="form-group" name="collection" value="users" />
+                                                  <input type="hidden" class="form-group" name="field" value="jenisusr" />
+                                                  <p>Pilih kategori user :</p>
+                                                  <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                      <input type="checkbox" class="custom-control-input" id="categoryuser1" name="userkategori" value="Admin">
+                                                      <label class="custom-control-label" for="categoryuser1">Admin</label>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                      <input type="checkbox" class="custom-control-input" id="categoryuser2" name="userkategori" value="Member">
+                                                      <label class="custom-control-label" for="categoryuser2">Member</label>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                      <input type="checkbox" class="custom-control-input" id="categoryuser3" name="userkategori" value="Pegawai">
+                                                      <label class="custom-control-label" for="categoryuser3">Pegawai</label>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <label for="name">Status user</label>
+                                                    <select class="form-select" name="aktifsts">
+                                                        <option value="">Pilih status user</option>
+                                                        <option value="Aktif">Aktif</option>
+                                                        <option value="Non Aktif">Non Aktif</option>
+                                                    </select>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <label for="name">Cari :</label>
+                                                    <input type="text" class="form-control" name="search" placeholder="Masukkan kata kunci"/>
+                                                  </div>
+                                                  <div class="form-group">
+                                                      <label for="name">Urutkan Secara</label>
+                                                      <select class="form-select" name="sort">
+                                                          <option value="">Pilih Metode Pengurutan</option>
+                                                          <option value="1">Ascending</option>
+                                                          <option value="-1">Descending</option>
+                                                      </select>
+                                                  </div>
+                                                  <div class="form-group">
+                                                      <label for="name">Limit hasil pencarian</label>
+                                                      <input type="number" class="form-control" name="limit" placeholder="Masukkan banyaknya batasan lihat dokumen"/>
+                                                  </div>
+  
+                                                  <div class="modal-footer">
+                                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                          Tutup
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">Cari</button>
+                                                  </div>
+                                              </form>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="name">Kondisi 2</label>
-                                        <select class="form-select" name="condition2">
-                                            <option value="">Pilih Kondisi</option>
-                                            <option value="$gt">></option>
-                                            <option value="$lt"><</option>
-                                            <option value="$gte">>=</option>
-                                            <option value="$lte"><=</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="name">Nilai umur 2</label>
-                                        <input type="number" class="form-control" name="umur2" placeholder="Masukkan umur (tahun)"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="name">Urutkan Secara</label>
-                                        <select class="form-select" name="sort">
-                                            <option value="">Pilih Metode Pengurutan</option>
-                                            <option value="1">Ascending</option>
-                                            <option value="-1">Descending</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="name">Limit hasil pencarian</label>
-                                        <input type="number" class="form-control" name="limit" placeholder="Masukkan banyaknya batasan lihat dokumen"/>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                            Tutup
-                                        </button>
-                                        <button type="submit" class="btn btn-primary">Cari</button>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
                       
                             <div class="collapse" id="transaksiForm">
                                 <br>
                                 <div class="form-group">
-                                    <label for="field">Pilih Atribut Transaksi :</label>
+                                    <label for="field">Pilih Opsi Filter Transaksi :</label>
                                     <select class="form-select" name="field" id="field" onchange="toggleInput(this)">
-                                      <option value="">Pilih Atribut</option>
+                                      <option value="">Pilih Opsi Filter</option>
                                       <option value="createdAt">Waktu Transaksi</option>
                                       <option value="hrgtotal">Harga Total</option>
                                     </select>
@@ -540,13 +616,14 @@
                             <div class="collapse" id="bukuForm">
                                 <br>
                                     <div class="form-group">
-                                        <label for="field">Pilih Atribut Buku :</label>
+                                        <label for="field">Pilih Opsi Filter Buku :</label>
                                         <select class="form-select" name="field" id="field" onchange="toggleInput(this)">
-                                          <option value="">Pilih Atribut</option>
+                                          <option value="">Pilih Opsi Filter</option>
                                           <option value="tahuntbt">Tahun Terbit</option>
                                           <option value="harga">Harga Buku</option>
                                           <option value="stok">Stok Buku</option>
                                           <option value="jmlbeli">Jumlah Dibeli</option>
+                                          <option value="kategori">Cari dengan Kategori</option>
                                         </select>
                                     </div>
 
@@ -783,6 +860,76 @@
                                                 </div>
                                             </form>
                                         </div>
+
+                                        <div id="kategori" style="display: none;">
+                                            <hr style="border: none; border-top: 3px solid black; width: 100%">
+                                            <p class="text-center">Filter spesifik cari dengan kategori buku</p>
+                                            <hr style="border: none; border-top: 3px solid black; width: 100%">
+                                              <form action="/reports/specific" method="GET" onsubmit="return validateForm('bukukategori')">
+                                                  <input type="hidden" class="form-group" name="collection" value="books" />
+                                                  <input type="hidden" class="form-group" name="field" value="kategori" />
+                                                  <p>Pilih kategori buku :</p>
+                                                  <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                      <input type="checkbox" class="custom-control-input" id="category1" name="bukukategori" value="Fiksi">
+                                                      <label class="custom-control-label" for="category1">Fiksi</label>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                      <input type="checkbox" class="custom-control-input" id="category2" name="bukukategori" value="Nonfiksi">
+                                                      <label class="custom-control-label" for="category2">Non Fiksi</label>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                      <input type="checkbox" class="custom-control-input" id="category3" name="bukukategori" value="Pendidikan">
+                                                      <label class="custom-control-label" for="category3">Pendidikan</label>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                      <input type="checkbox" class="custom-control-input" id="category4" name="bukukategori" value="Anak-anak">
+                                                      <label class="custom-control-label" for="category4">Anak-anak</label>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                      <input type="checkbox" class="custom-control-input" id="category5" name="bukukategori" value="Pengembangan Diri">
+                                                      <label class="custom-control-label" for="category5">Pengembangan diri</label>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                      <input type="checkbox" class="custom-control-input" id="category6" name="bukukategori" value="Seni dan Desain">
+                                                      <label class="custom-control-label" for="category6">Seni dan Desain</label>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <label for="name">Cari :</label>
+                                                    <input type="text" class="form-control" name="search" placeholder="Masukkan kata kunci"/>
+                                                  </div>
+                                                  <div class="form-group">
+                                                      <label for="name">Urutkan Secara</label>
+                                                      <select class="form-select" name="sort">
+                                                          <option value="">Pilih Metode Pengurutan</option>
+                                                          <option value="1">Ascending</option>
+                                                          <option value="-1">Descending</option>
+                                                      </select>
+                                                  </div>
+                                                  <div class="form-group">
+                                                      <label for="name">Limit hasil pencarian</label>
+                                                      <input type="number" class="form-control" name="limit" placeholder="Masukkan banyaknya batasan lihat dokumen"/>
+                                                  </div>
+  
+                                                  <div class="modal-footer">
+                                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                          Tutup
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">Cari</button>
+                                                  </div>
+                                              </form>
+                                          </div>
                                     </div>
                             </div>
                         </div>
@@ -800,6 +947,15 @@
                   document.getElementById(selectElement.value).style.display = 'block';
                 }
             }
+
+            function validateForm(formName) {
+                const checkboxes = document.querySelectorAll(`input[name=${formName}]:checked`);
+                if (checkboxes.length < 1) {
+                  alert("Pilih minimal satu kategori !");
+                  return false;
+                }
+                return true;
+              }
         </script>
     </body>
 </html>
